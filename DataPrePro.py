@@ -1,0 +1,130 @@
+#Kyle Jones
+#Data Preprocessing
+#Imports
+import pandas as pd
+import os
+import numpy as np
+
+#Import datasets
+features = ["model","year","price","transmission","mileage","fuelType","tax","mpg","engineSize"]
+audis = pd.read_csv("CarsData/audi.csv", names=features, index_col=False)
+bmws = pd.read_csv("CarsData/bmw.csv", names=features, index_col=False)
+fords = pd.read_csv("CarsData/ford.csv", names=features, index_col=False)
+hyundais = pd.read_csv("CarsData/hyundai.csv", names=features, index_col=False)
+mercs = pd.read_csv("CarsData/merc.csv", names=features, index_col=False)
+skodas = pd.read_csv("CarsData/skoda.csv", names=features, index_col=False)
+toyotas = pd.read_csv("CarsData/toyota.csv", names=features, index_col=False)
+vauxhalls = pd.read_csv("CarsData/vauxhall.csv", names=features, index_col=False)
+vws = pd.read_csv("CarsData/vw.csv", names=features, index_col=False)
+
+#Remove first row from cars
+audis = audis.iloc[1:]
+bmws = bmws.iloc[1:]
+fords = fords.iloc[1:]
+hyundais = hyundais.iloc[1:]
+mercs = mercs.iloc[1:]
+skodas = skodas.iloc[1:]
+toyotas = toyotas.iloc[1:]
+vauxhalls = vauxhalls.iloc[1:]
+vws = vws.iloc[1:]
+
+#Reset the index after removing the top row
+audis.reset_index(drop=True, inplace=True)
+bmws.reset_index(drop=True, inplace=True)
+fords.reset_index(drop=True, inplace=True)
+hyundais.reset_index(drop=True, inplace=True)
+mercs.reset_index(drop=True, inplace=True)
+skodas.reset_index(drop=True, inplace=True)
+toyotas.reset_index(drop=True, inplace=True)
+vauxhalls.reset_index(drop=True, inplace=True)
+vws.reset_index(drop=True, inplace=True)
+
+#Add the make of car
+audis.insert(0, 'make', 'audi')
+bmws.insert(0, 'make', 'bmw')
+fords.insert(0, 'make', 'ford')
+hyundais.insert(0, 'make', 'hyundi')
+mercs.insert(0, 'make', 'mercedes')
+skodas.insert(0, 'make', 'skoda')
+toyotas.insert(0, 'make', 'toyota')
+vauxhalls.insert(0, 'make', 'vauxhall')
+vws.insert(0, 'make', 'volkswagen')
+
+#Combine all datasets
+combined_df = pd.concat([audis,bmws,fords,hyundais,mercs,skodas,toyotas,vauxhalls,vws], ignore_index=True)
+
+#Import car maintenacne costs
+maiFeatures = ["make","model","year","maintenanceCostYearly"]
+maiCost = pd.read_csv("CarsData/Car Maintenance Costs.csv", names=maiFeatures, index_col=False)
+
+#Remove top row
+maiCost = maiCost.iloc[1:]
+
+#Reset the index after removing the top row
+maiCost.reset_index(drop=True, inplace=True)
+
+#Uncapitalise make
+maiCost['make'] = maiCost['make'].str.lower()
+maiCost.sample(n=5)
+
+# Define a function to lowercase each individual word in a string
+def lowercase_words(string):
+    # Split the string into words
+    words = string.split()
+    # Lowercase each word individually
+    lowercase_words = [word.lower() for word in words]
+    # Join the words back together
+    return ' '.join(lowercase_words)
+
+# Apply the function to the column
+maiCost['model'] = maiCost['model'].apply(lowercase_words)
+combined_df['model'] = combined_df['model'].apply(lowercase_words)
+#Merge the data
+merged_df = pd.merge(combined_df, maiCost, on=['make', 'model', 'year'], how='left')
+
+#Import car star ratings
+starFeatures = ["make","model","stars"]
+starsDf = pd.read_csv("CarsData/Car Reviews.csv", names=starFeatures, index_col=False)
+
+#Uncapitalise make
+starsDf['make'] = starsDf['make'].str.lower()
+starsDf.sample(n=5)
+
+# Apply the function to the column
+starsDf['model'] = starsDf['model'].apply(lowercase_words)
+merged_df = pd.merge(combined_df, starsDf, on=['make', 'model'], how='left')
+
+# Define the color options
+colors = ['red', 'green', 'blue', 'silver', 'black', 'yellow', 'white']
+
+# Generate the "colour" column
+merged_df['colour'] = np.random.choice(colors, size=len(merged_df))
+
+# Generate the "co2" column
+co2 = np.random.choice(np.arange(3, 5, 0.1), size=len(merged_df))
+
+# Add the "co2" column to the merged DataFrame
+merged_df['co2(metric tons per year)'] = co2
+
+# Define the folder path for exporting the CSV file
+folder_path = "CarsData"
+
+# Define the file path for the CSV export
+combined_csv_path = os.path.join(folder_path, "merged_data.csv")
+
+# Export the combined DataFrame to a CSV file in the specified folder
+merged_df.to_csv(combined_csv_path, index=False)
+
+import csv
+
+def read_csv_to_string(file_path):
+    # Read CSV file and convert it to a string
+    with open(file_path, 'r', newline='') as file:
+        csv_reader = csv.reader(file)
+        csv_data = '\n'.join(','.join(row) for row in csv_reader)
+    return csv_data
+
+def write_string_to_file(data_string, output_file):
+    # Write string data to a text file
+    with open(output_file, 'w') as file:
+        file.write(data_string)
