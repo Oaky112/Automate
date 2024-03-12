@@ -1,3 +1,6 @@
+# Joshua Oakman
+# Data Scraping
+
 import os
 import re
 import time
