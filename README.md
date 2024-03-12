@@ -1,3 +1,5 @@
+# Automate
+## sfdfafafa
 # Autotrader Car Scraper
 ## Overview
 ### This Python script automates the process of scraping car listings from the Autotrader website based on user-defined criteria. It utilizes web scraping techniques with Selenium WebDriver and BeautifulSoup to extract relevant car details such as price, year, mileage, etc., and saves the data into a CSV file.
