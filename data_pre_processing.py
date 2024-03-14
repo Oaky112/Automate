@@ -1,4 +1,4 @@
-#Kyle Jones 
+#Kyle Jones
 #Data Preprocessing
 #Imports
 import pandas as pd
@@ -7,15 +7,15 @@ import numpy as np
 
 #Import datasets
 features = ["model","year","price","transmission","mileage","fuelType","tax","mpg","engineSize"]
-audis = pd.read_csv("CarsData/audi.csv", names=features, index_col=False) 
-bmws = pd.read_csv("CarsData/bmw.csv", names=features, index_col=False) 
-fords = pd.read_csv("CarsData/ford.csv", names=features, index_col=False) 
-hyundais = pd.read_csv("CarsData/hyundai.csv", names=features, index_col=False) 
-mercs = pd.read_csv("CarsData/merc.csv", names=features, index_col=False) 
-skodas = pd.read_csv("CarsData/skoda.csv", names=features, index_col=False) 
-toyotas = pd.read_csv("CarsData/toyota.csv", names=features, index_col=False) 
-vauxhalls = pd.read_csv("CarsData/vauxhall.csv", names=features, index_col=False) 
-vws = pd.read_csv("CarsData/vw.csv", names=features, index_col=False) 
+audis = pd.read_csv("CarsData/audi.csv", names=features, index_col=False)
+bmws = pd.read_csv("CarsData/bmw.csv", names=features, index_col=False)
+fords = pd.read_csv("CarsData/ford.csv", names=features, index_col=False)
+hyundais = pd.read_csv("CarsData/hyundai.csv", names=features, index_col=False)
+mercs = pd.read_csv("CarsData/merc.csv", names=features, index_col=False)
+skodas = pd.read_csv("CarsData/skoda.csv", names=features, index_col=False)
+toyotas = pd.read_csv("CarsData/toyota.csv", names=features, index_col=False)
+vauxhalls = pd.read_csv("CarsData/vauxhall.csv", names=features, index_col=False)
+vws = pd.read_csv("CarsData/vw.csv", names=features, index_col=False)
 
 #Remove first row from cars
 audis = audis.iloc[1:]
@@ -81,14 +81,18 @@ combined_df['model'] = combined_df['model'].apply(lowercase_words)
 
 merged_df = pd.merge(combined_df, maiCost, on=['make', 'model', 'year'], how='left')
 
-# Generate the "stars" column
-stars = np.random.choice(np.arange(2, 5.1, 0.1), size=len(merged_df))
+#Import car star ratings
+starFeatures = ["make","model","stars"]
+starsDf = pd.read_csv("CarsData/Car Reviews.csv", names=starFeatures, index_col=False)
 
-# Prioritize numbers between 3.5 and 4
-stars[(stars < 3.5) | (stars > 4)] = np.random.choice([3.5, 3.6, 3.7, 3.8, 3.9, 4.0], size=np.sum((stars < 3.5) | (stars > 4)))
+#Uncapitalise make
+starsDf['make'] = starsDf['make'].str.lower()
+starsDf.sample(n=5)
 
-# Add the "stars" column to the merged DataFrame
-merged_df['stars'] = stars
+# Apply the function to the column
+starsDf['model'] = starsDf['model'].apply(lowercase_words)
+
+merged_df = pd.merge(combined_df, starsDf, on=['make', 'model'], how='left')
 
 # Define the color options
 colors = ['red', 'green', 'blue', 'silver', 'black', 'yellow', 'white']
