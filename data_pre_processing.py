@@ -92,7 +92,7 @@ starsDf.sample(n=5)
 # Apply the function to the column
 starsDf['model'] = starsDf['model'].apply(lowercase_words)
 
-merged_df = pd.merge(combined_df, starsDf, on=['make', 'model'], how='left')
+merged_df = pd.merge(merged_df, starsDf, on=['make', 'model'], how='left')
 
 # Define the color options
 colors = ['red', 'green', 'blue', 'silver', 'black', 'yellow', 'white']
