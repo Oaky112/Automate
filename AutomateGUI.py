@@ -5,7 +5,8 @@ from Final.SplashScreen import SplashScreen
 from Final.HomePage import HomePage
 from Final.CarsChoices import CarsChoicesPage
 from Final.MainWindow import MainWindow
-from Final.RefineChoices import RefineChoicesPage  # Import RefineChoicesPage
+from Final.RefineChoices import RefineChoicesPage
+from Final.FilteredData import FilteredDataPage
 
 
 class AutomateGUI(tk.Tk):
@@ -48,11 +49,21 @@ class AutomateGUI(tk.Tk):
     def navigate_to_car_choices(self, master):
         cars_choices_page = CarsChoicesPage(master)  # Use master instead of main_window
         cars_choices_page.pack(fill="both", expand=True)
-        
-    def navigate_to_refine_choices(self, master, selected_models_dict):  # Pass selected_models_dict
-        refine_choices_page = RefineChoicesPage(master, selected_models_dict)  # Use master and selected_models_dict
+
+    def navigate_to_refine_choices(
+        self, master, selected_models_dict
+    ):  # Pass selected_models_dict
+        refine_choices_page = RefineChoicesPage(
+            master, selected_models_dict
+        )  # Use master and selected_models_dict
         refine_choices_page.pack(fill="both", expand=True)
-        
+
+    def navigate_to_filtered_data(self, master, filtered_results):
+        filtered_data_page = FilteredDataPage(
+            master, filtered_results=filtered_results
+        )  # Pass filtered_results as a keyword argument
+        filtered_data_page.pack(fill="both", expand=True)
+
 
 if __name__ == "__main__":
     app = AutomateGUI()

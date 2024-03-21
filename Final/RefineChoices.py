@@ -5,8 +5,11 @@ from datetime import date
 from geopy.geocoders import Nominatim
 import geopy.distance
 from tkinter import *
+from Final.FilteredData import FilteredDataPage
+
 
 import csv
+
 
 class RefineChoicesPage(ttk.Frame):
     def __init__(self, master):
@@ -33,20 +36,14 @@ class RefineChoicesPage(ttk.Frame):
         # Create dropdown for minimum year
         year_min_var = tk.StringVar()
         self.year_min_dropdown = ttk.Combobox(
-            self,
-            textvariable=year_min_var,
-            values=years_list,
-            state="readonly"
+            self, textvariable=year_min_var, values=years_list, state="readonly"
         )
         self.year_min_dropdown.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
         # Create dropdown for maximum year
         year_max_var = tk.StringVar()
         self.year_max_dropdown = ttk.Combobox(
-            self,
-            textvariable=year_max_var,
-            values=years_list,
-            state="readonly"
+            self, textvariable=year_max_var, values=years_list, state="readonly"
         )
         self.year_max_dropdown.grid(row=1, column=2, padx=5, pady=5, sticky="w")
 
@@ -89,7 +86,9 @@ class RefineChoicesPage(ttk.Frame):
         self.price_max_dropdown.set(price_values[-1])
 
         # Bind event to update max price dropdown based on min price dropdown
-        self.price_min_dropdown.bind("<<ComboboxSelected>>", self.update_max_price_dropdown)
+        self.price_min_dropdown.bind(
+            "<<ComboboxSelected>>", self.update_max_price_dropdown
+        )
 
         # Create dropdowns for mileage range
         mileage_label = ttk.Label(self, text="Select Mileage Range (km):")
@@ -123,7 +122,9 @@ class RefineChoicesPage(ttk.Frame):
         self.mileage_max_dropdown.set(mileage_values[-1])
 
         # Bind event to update max mileage dropdown based on min mileage dropdown
-        self.mileage_min_dropdown.bind("<<ComboboxSelected>>", self.update_max_mileage_dropdown)
+        self.mileage_min_dropdown.bind(
+            "<<ComboboxSelected>>", self.update_max_mileage_dropdown
+        )
 
         # Create other dropdowns and checkboxes as before
 
@@ -132,7 +133,10 @@ class RefineChoicesPage(ttk.Frame):
         transmission_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
         transmission_var = tk.StringVar()
         self.transmission_dropdown = ttk.Combobox(
-            self, textvariable=transmission_var, values=self.get_unique_values('transmission'), state="readonly"
+            self,
+            textvariable=transmission_var,
+            values=self.get_unique_values("transmission"),
+            state="readonly",
         )
         self.transmission_dropdown.grid(row=4, column=1, padx=5, pady=5, sticky="e")
 
@@ -141,7 +145,10 @@ class RefineChoicesPage(ttk.Frame):
         fuel_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
         fuel_var = tk.StringVar()
         self.fuel_dropdown = ttk.Combobox(
-            self, textvariable=fuel_var, values=self.get_unique_values('fuelType'), state="readonly"
+            self,
+            textvariable=fuel_var,
+            values=self.get_unique_values("fuelType"),
+            state="readonly",
         )
         self.fuel_dropdown.grid(row=5, column=1, padx=5, pady=5, sticky="e")
 
@@ -149,7 +156,9 @@ class RefineChoicesPage(ttk.Frame):
         engine_label = ttk.Label(self, text="Select Engine Size Range (Litres):")
         engine_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
 
-        engine_values = ["{:.1f}".format(val) for val in list((0.1 * i) + 1.0 for i in range(21))]
+        engine_values = [
+            "{:.1f}".format(val) for val in list((0.1 * i) + 1.0 for i in range(21))
+        ]
         engine_min_var = tk.StringVar()
         self.engine_min_dropdown = ttk.Combobox(
             self,
@@ -171,8 +180,9 @@ class RefineChoicesPage(ttk.Frame):
         self.engine_min_dropdown.set(engine_values[0])
         self.engine_max_dropdown.set(engine_values[-1])
 
-        self.engine_min_dropdown.bind("<<ComboboxSelected>>", self.update_max_engine_dropdown)
-
+        self.engine_min_dropdown.bind(
+            "<<ComboboxSelected>>", self.update_max_engine_dropdown
+        )
 
         # Create dropdown for road tax
         road_tax_label = ttk.Label(self, text="Select Road Tax (£):")
@@ -190,7 +200,9 @@ class RefineChoicesPage(ttk.Frame):
         self.road_tax_dropdown.grid(row=7, column=1, padx=5, pady=5, sticky="e")
 
         # Create dropdowns for yearly maintenance cost range
-        maintenance_label = ttk.Label(self, text="Estimated Yearly Maintenance Cost (£):")
+        maintenance_label = ttk.Label(
+            self, text="Estimated Yearly Maintenance Cost (£):"
+        )
         maintenance_label.grid(row=8, column=0, padx=5, pady=5, sticky="w")
 
         # Create a list of values for the maintenance cost dropdowns
@@ -211,13 +223,21 @@ class RefineChoicesPage(ttk.Frame):
         colour_label = ttk.Label(self, text="Select Colour:")
         colour_label.grid(row=10, column=0, padx=5, pady=5, sticky="w")
 
-        colours = self.get_unique_values('colour')
+        colours = self.get_unique_values("colour")
         self.colour_checkbuttons = []
         for index, colour in enumerate(colours):
             var = tk.IntVar()
-            checkbox = ttk.Checkbutton(self, text=colour, variable=var, onvalue=1, offvalue=0,
-                                    command=lambda v=var, c=colour: self.toggle_colour_selection(v, c))
-            checkbox.grid(row=10 + index // 3, column=index % 3 + 1, padx=5, pady=5, sticky="w")
+            checkbox = ttk.Checkbutton(
+                self,
+                text=colour,
+                variable=var,
+                onvalue=1,
+                offvalue=0,
+                command=lambda v=var, c=colour: self.toggle_colour_selection(v, c),
+            )
+            checkbox.grid(
+                row=10 + index // 3, column=index % 3 + 1, padx=5, pady=5, sticky="w"
+            )
             self.colour_checkbuttons.append((checkbox, var))
 
         # Create dropdown for stars rating
@@ -230,17 +250,34 @@ class RefineChoicesPage(ttk.Frame):
         }
 
         stars_label = ttk.Label(self, text="Select Stars Rating:")
-        stars_label.grid(row=11 + len(self.get_unique_values('colour')) // 3 + 1, column=0, padx=5, pady=5, sticky="w")
+        stars_label.grid(
+            row=11 + len(self.get_unique_values("colour")) // 3 + 1,
+            column=0,
+            padx=5,
+            pady=5,
+            sticky="w",
+        )
         stars_var = tk.StringVar()
         self.stars_dropdown = ttk.Combobox(
-            self, textvariable=stars_var, values=list(self.stars_mapping.keys()), state="readonly"
+            self,
+            textvariable=stars_var,
+            values=list(self.stars_mapping.keys()),
+            state="readonly",
         )
-        self.stars_dropdown.grid(row=11 + len(self.get_unique_values('colour')) // 3 + 1, column=1, padx=5, pady=5, sticky="e")
+        self.stars_dropdown.grid(
+            row=11 + len(self.get_unique_values("colour")) // 3 + 1,
+            column=1,
+            padx=5,
+            pady=5,
+            sticky="e",
+        )
 
         # Function to get the selected stars rating in the desired format
         def get_selected_stars(self):
             selected_value = self.stars_dropdown.get()
-            return stars_mapping.get(selected_value, "")  # Return mapped value or empty string if not found
+            return stars_mapping.get(
+                selected_value, ""
+            )  # Return mapped value or empty string if not found
 
         # Create LEZ Checkbox
         self.lez_var = tk.IntVar()  # Store the variable as an instance attribute
@@ -250,18 +287,25 @@ class RefineChoicesPage(ttk.Frame):
         self.lez_checkbox.grid(row=18, column=0, columnspan=2, padx=10, pady=5)
 
         # Create a label and entry box for car ownership duration
-        duration_label = ttk.Label(self, text="How Long Do You Intend to Keep the Car (in years):")
+        duration_label = ttk.Label(
+            self, text="How Long Do You Intend to Keep the Car (in years):"
+        )
         duration_label.grid(row=12, column=0, padx=5, pady=5, sticky="w")
         self.duration_entry = ttk.Entry(self)
         self.duration_entry.grid(row=12, column=1, padx=5, pady=5, sticky="w")
 
         # Submit button
         submit_btn = ttk.Button(self, text="Submit", command=self.filter_cars)
-        submit_btn.grid(row=20 + len(self.get_unique_values('colour')) // 3 + 2, column=1, columnspan=3, pady=20)
+        submit_btn.grid(
+            row=20 + len(self.get_unique_values("colour")) // 3 + 2,
+            column=1,
+            columnspan=3,
+            pady=20,
+        )
 
     def read_car_data(self):
         car_data = []
-        with open('car_data.csv', newline='', encoding='utf-8') as csvfile:
+        with open("car_data.csv", newline="", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 car_data.append(row)
@@ -303,8 +347,10 @@ class RefineChoicesPage(ttk.Frame):
         price_max = int(price_max) if price_max else 100000
         mileage_min = int(mileage_min) if mileage_min else 0
         mileage_max = int(mileage_max) if mileage_max else 50500
-        road_tax = int(self.road_tax_dropdown.get()) if self.road_tax_dropdown.get() else ''
-        maintenance_min = int(maintenance_min) if maintenance_min else ''
+        road_tax = (
+            int(self.road_tax_dropdown.get()) if self.road_tax_dropdown.get() else ""
+        )
+        maintenance_min = int(maintenance_min) if maintenance_min else ""
         car_duration = int(car_duration) if car_duration else None
         lez_value = "Yes" if self.lez_var.get() == 1 else "No"
 
@@ -321,19 +367,29 @@ class RefineChoicesPage(ttk.Frame):
             self.selected_colours,  # Include selected colours
             [car_duration],  # Include car ownership duration
             [stars_rating],
-            [lez_value]  # Include LEZ value
+            [lez_value],  # Include LEZ value
         ]
 
         # Print the arrays to the terminal
         for i, arr in enumerate(user_entries):
-            var_name = f'array_{i}'
+            var_name = f"array_{i}"
             globals()[var_name] = arr
-            print(f'{var_name}: {arr}')
+            print(f"{var_name}: {arr}")
 
+        # Perform filtering based on the selected criteria
+        filtered_results = []  # Placeholder, replace with actual filtering logic
+
+        # Destroy the current page
+        self.destroy()
+
+        # Show the CarsChoicesPage in the same window
+        self.master.show_page(FilteredDataPage)
 
     def get_selected_stars(self):
         selected_value = self.stars_dropdown.get()
-        return self.stars_mapping.get(selected_value, "")  # Return mapped value or empty string if not found
+        return self.stars_mapping.get(
+            selected_value, ""
+        )  # Return mapped value or empty string if not found
 
     def update_max_price_dropdown(self, event):
         # Get the selected minimum price
@@ -343,7 +399,7 @@ class RefineChoicesPage(ttk.Frame):
         filtered_prices = [str(i) for i in range(min_price, 100001, 500)]
 
         # Update the values in the max price dropdown
-        self.price_max_dropdown['values'] = filtered_prices
+        self.price_max_dropdown["values"] = filtered_prices
 
     def update_max_mileage_dropdown(self, event):
         # Get the selected minimum mileage
@@ -353,34 +409,41 @@ class RefineChoicesPage(ttk.Frame):
         filtered_mileages = [str(i) for i in range(min_mileage, 50501, 500)]
 
         # Update the values in the max mileage dropdown
-        self.mileage_max_dropdown['values'] = filtered_mileages
+        self.mileage_max_dropdown["values"] = filtered_mileages
 
     def update_max_dropdown(self, event):
         # Get the selected minimum year
         min_year = int(self.year_min_dropdown.get())
 
         # Filter the years list to include only those less than or equal to the selected minimum year
-        filtered_years = [year for year in range(min_year, 2025)]  # Assuming max year is 2024
+        filtered_years = [
+            year for year in range(min_year, 2025)
+        ]  # Assuming max year is 2024
 
         # Update the values in the max dropdown
-        self.year_max_dropdown['values'] = filtered_years[::-1]  # Reverse the list for descending order
-        
+        self.year_max_dropdown["values"] = filtered_years[
+            ::-1
+        ]  # Reverse the list for descending order
+
     def update_max_engine_dropdown(self, event):
         min_engine = float(self.engine_min_dropdown.get())
-        max_engine_values = ["{:.1f}".format(val) for val in list((0.1 * i) + min_engine for i in range(int((3.0 - min_engine) * 10) + 1))]
-        self.engine_max_dropdown['values'] = max_engine_values
+        max_engine_values = [
+            "{:.1f}".format(val)
+            for val in list(
+                (0.1 * i) + min_engine for i in range(int((3.0 - min_engine) * 10) + 1)
+            )
+        ]
+        self.engine_max_dropdown["values"] = max_engine_values
         self.engine_max_dropdown.set(max_engine_values[-1])
-        
+
     def get_selected_road_tax(self):
         road_tax_str = self.road_tax_dropdown.get()
-        road_tax = int(road_tax_str) if road_tax_str else 0  # Convert to int if not empty, otherwise default to 0
+        road_tax = (
+            int(road_tax_str) if road_tax_str else 0
+        )  # Convert to int if not empty, otherwise default to 0
         return [0, road_tax]
-
 
 
 if __name__ == "__main__":
     app = RefineChoicesPage()
     app.mainloop()
-
-
-
