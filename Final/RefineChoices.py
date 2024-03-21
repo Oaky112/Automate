@@ -5,7 +5,6 @@ from datetime import date
 from geopy.geocoders import Nominatim
 import geopy.distance
 from tkinter import *
-from Final.FilteredData import FilteredDataPage
 
 
 import csv
@@ -379,11 +378,29 @@ class RefineChoicesPage(ttk.Frame):
         # Perform filtering based on the selected criteria
         filtered_results = []  # Placeholder, replace with actual filtering logic
 
-        # Destroy the current page
-        self.destroy()
+        # Create a new window for displaying the 2D array
+        result_window = tk.Toplevel(self.master)
+        result_window.title("Filtered Data")
 
-        # Show the CarsChoicesPage in the same window
-        self.master.show_page(FilteredDataPage)
+        # Create a label to display the 2D array
+        result_label = tk.Label(result_window, text="User Entries:")
+        result_label.pack(padx=20, pady=10)
+
+        # Display the 2D array in the label
+        for i, arr in enumerate(user_entries):
+            label_text = f"array_{i}: {arr}"
+            entry_label = tk.Label(result_window, text=label_text)
+            entry_label.pack()
+
+        # Optionally, you can add a button to close the result window
+        close_button = ttk.Button(
+            result_window, text="Close", command=result_window.destroy
+        )
+        close_button.pack(pady=10)
+
+        # Placeholder for actual filtering logic and displaying results in FilteredDataPage
+        # Replace this with your actual logic
+        filtered_results = []  # Placeholder, replace with actual filtering logic
 
     def get_selected_stars(self):
         selected_value = self.stars_dropdown.get()
@@ -447,3 +464,30 @@ class RefineChoicesPage(ttk.Frame):
 if __name__ == "__main__":
     app = RefineChoicesPage()
     app.mainloop()
+
+# Created methods to filter by range or selection
+
+
+# Filters options where you select multiple
+def filterBySelection(df, column_name, values_to_keep):
+    # Check if the array of values to keep is empty and if so return all
+    if len(values_to_keep) == 0:
+        return df
+    # Filter the DataFrame based on whether values in the specified column are present in the array
+    filtered_df = df[df[column_name].isin(values_to_keep)]
+    # Reset the index after filtering
+    filtered_df.reset_index(drop=True, inplace=True)
+    return filtered_df
+
+
+# Filters options in a range
+def filterByRange(df, column_name, range):
+    # Check if the array of values to keep is empty and if so return all
+    if len(range) == 0:
+        return df
+    lower, higher = range
+    # Filter the DataFrame based on the range of values in the specified column
+    filtered_df = df[(df[column_name] >= lower) & (df[column_name] <= higher)]
+    # Reset the index after filtering
+    filtered_df.reset_index(drop=True, inplace=True)
+    return filtered_df
